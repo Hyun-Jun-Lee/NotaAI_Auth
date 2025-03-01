@@ -1,7 +1,7 @@
 import pytest
 
-from src.domain.user import User
-from src.utils.password import hash_password
+from domain.user import User
+from utils import hash_password
 
 
 @pytest.fixture
