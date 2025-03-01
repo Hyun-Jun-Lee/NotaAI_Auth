@@ -9,6 +9,7 @@ class Action(Enum):
     INVITE_USER = "INVITE_USER"
     DELETE_USER = "DELETE_USER"
 
+# TODO : 향후 DB에 테이블 생성
 ROLE_ACTIONS = {
     "ADMIN" : [
         Action.CREATE_PROJECT,
