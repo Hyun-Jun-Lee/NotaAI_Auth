@@ -4,7 +4,7 @@ from repository.interface.base_repository import BaseRepository
 from domain.project import Project, ProjectMember
 
 
-class IProjectRepository(BaseRepository[Project]):
+class IProjectRepository(BaseRepository):
     
     def get_by_name(self, name: str) -> Optional[Project]:
         """
@@ -31,7 +31,7 @@ class IProjectRepository(BaseRepository[Project]):
         pass
 
 
-class IProjectMemberRepository(BaseRepository[ProjectMember]):
+class IProjectMemberRepository(BaseRepository):
     
     def get_by_project_id(self, project_id: int) -> List[ProjectMember]:
         """

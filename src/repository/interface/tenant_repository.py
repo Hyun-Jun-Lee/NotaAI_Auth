@@ -4,7 +4,7 @@ from repository.interface.base_repository import BaseRepository
 from domain.tenant import Tenant
 
 
-class ITenantRepository(BaseRepository[Tenant]):
+class ITenantRepository(BaseRepository):
     
     def get_by_name(self, name: str) -> Optional[Tenant]:
         """

@@ -1,12 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, List, Optional, Any, Dict, Union
+from typing import List, Optional, Union, Any
 
-T = TypeVar('T')
-
-class BaseRepository(Generic[T], ABC):
+class BaseRepository(ABC):
     
     @abstractmethod
-    def save(self, entity: T) -> T:
+    def save(self, entity: Any) -> Any:
         """
         엔티티를 저장하거나 업데이트합니다.
         """
@@ -20,14 +18,14 @@ class BaseRepository(Generic[T], ABC):
         pass
     
     @abstractmethod
-    def get_by_id(self, id: int) -> Optional[T]:
+    def get_by_id(self, id: int) -> Optional[Any]:
         """
         ID로 엔티티를 조회합니다.
         """
         pass
     
     @abstractmethod
-    def get_all(self) -> List[T]:
+    def get_all(self) -> List[Any]:
         """
         모든 엔티티를 조회합니다.
         """

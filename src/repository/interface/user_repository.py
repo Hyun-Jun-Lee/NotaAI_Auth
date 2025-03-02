@@ -4,7 +4,7 @@ from repository.interface.base_repository import BaseRepository
 from domain.user import User
 
 
-class IUserRepository(BaseRepository[User]):
+class IUserRepository(BaseRepository):
     
     def get_by_email(self, email: str) -> Optional[User]:
         """
