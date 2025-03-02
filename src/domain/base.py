@@ -6,5 +6,5 @@ class BaseDomain:
         self.created_at = created_at or datetime.now()
         self.updated_at = updated_at or datetime.now()
 
-    def update_timestamps(self) -> None:
+    def update(self) -> None:
         self.updated_at = datetime.now()

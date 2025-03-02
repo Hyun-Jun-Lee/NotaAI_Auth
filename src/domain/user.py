@@ -14,13 +14,12 @@ from exception.domain.user_exception import (
 )
 
 class User:
-    def __init__(self, id: str, email: str, password_hash: str, tenant_id: str, roles: List[str] = None):
+    def __init__(self, id: int, email: str, password_hash: str, tenant_id: str, roles: List[str] = None):
         self.id = id
         self.email = email
         self.password_hash = password_hash
         self.tenant_id = tenant_id
         self.roles = roles or []
-        self.is_active = True
         self.email_verified = False
         self.email_code = None
         self.email_code_expires_at = None
