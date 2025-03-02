@@ -1,25 +1,25 @@
 import secrets
 from datetime import datetime, timedelta
-from typing import List
 
 from utils import hash_password, check_password
-from domain.permission import ROLE_ACTIONS
-from exception.domain.user_exception import (
+from domain.base import BaseDomain
+from domain.permission import ROLE_ACTIONS, Action
+from domain.project import Project
+from exception.domain import (
     EmailCodeNotGeneratedException,
     EmailCodeExpiredException,
     EmailCodeMismatchException,
+    InvalidPasswordException,
     RoleNotFoundException,
-    UserRoleNotFoundException,
-    InvalidPasswordException
 )
 
-class User:
-    def __init__(self, id: int, email: str, password_hash: str, tenant_id: str, roles: List[str] = None):
-        self.id = id
+class User(BaseDomain):
+    def __init__(self, email: str, password_hash: str, tenant_id: str, is_admin: bool = False, created_at: datetime = None, updated_at: datetime = None, id: int = None):
+        super().__init__(id, created_at, updated_at)
         self.email = email
         self.password_hash = password_hash
         self.tenant_id = tenant_id
-        self.roles = roles or []
+        self.is_admin = is_admin
         self.email_verified = False
         self.email_code = None
         self.email_code_expires_at = None
@@ -29,6 +29,7 @@ class User:
 
         self.email_code = secrets.token_hex(8)
         self.email_code_expires_at = datetime.now() + timedelta(minutes=expires_in_minutes)
+        self.update_timestamp()
         return self.email_code
 
     def verify_email(self, email_code: str) -> bool:
@@ -48,6 +49,7 @@ class User:
         self.email_verified = True
         self.email_code = None
         self.email_code_expires_at = None
+        self.update_timestamp()
         return True
 
     def verify_password(self, password: str) -> bool:
@@ -75,29 +77,5 @@ class User:
         self.password_hash = hash_password(new_password)
         self.email_code = None
         self.email_code_expires_at = None
+        self.update_timestamp()
         return True
-
-    def add_role(self, role: str) -> None:
-        """사용자에게 역할을 추가합니다."""
-
-        if role not in ROLE_ACTIONS:
-            raise RoleNotFoundException(role)
-            
-        if role not in self.roles:
-            self.roles.append(role)
-    
-    def remove_role(self, role: str) -> None:
-        """사용자의 역할을 제거합니다."""
-
-        if role in self.roles:
-            self.roles.remove(role)
-        else:
-            raise UserRoleNotFoundException(role)
-    
-    def has_role(self, role: str) -> bool:
-        """사용자가 특정 역할을 가지고 있는지 확인합니다."""
-
-        if role not in ROLE_ACTIONS:
-            raise RoleNotFoundException(role)
-            
-        return role in self.roles
