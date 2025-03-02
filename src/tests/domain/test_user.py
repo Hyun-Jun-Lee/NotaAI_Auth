@@ -18,8 +18,7 @@ def test_user_creation(user):
     assert user.id == "user123"
     assert user.email == "test@example.com"
     assert user.tenant_id == "tenant456"
-    assert user.roles == ["user"]
-    assert user.is_active is True
+    assert user.is_admin is False
     assert user.email_verified is False
     assert user.email_code is None
     assert user.email_code_expires_at is None
