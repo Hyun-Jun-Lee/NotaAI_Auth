@@ -12,5 +12,4 @@ def user():
         email="test@example.com",
         password_hash=hash_password("password123"),
         tenant_id="tenant456",
-        roles=["user"]
     )
