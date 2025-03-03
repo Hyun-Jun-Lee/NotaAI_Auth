@@ -17,9 +17,7 @@ class Project(BaseDomain):
 
     @classmethod
     def create(cls, name: str, description: str, owner_id: int, tenant_id: int) -> "Project":
-        project = cls(name=name, description=description, owner_id=owner_id, tenant_id=tenant_id)
-        project.create_timestamp()
-        return project
+        return cls(name=name, description=description, owner_id=owner_id, tenant_id=tenant_id)
     
     def update(self, name: Optional[str] = None, description: Optional[str] = None) -> None:
         """프로젝트 정보를 업데이트합니다."""
@@ -47,14 +45,12 @@ class ProjectMember(BaseDomain):
 
     @classmethod
     def create(cls, project_id: int, user_id: int, role: str, invited_by: int) -> "ProjectMember":
-        project_member = cls(project_id=project_id, user_id=user_id, role=role, invited_by=invited_by)
-        project_member.create_timestamp()
-        return project_member
+        return cls(project_id=project_id, user_id=user_id, role=role, invited_by=invited_by)
 
     def change_role(self, new_role: str) -> None:
         """멤버의 역할을 변경합니다."""
         if new_role not in ROLE_ACTIONS:
-            raise InvalidRoleException(f"Invalid role: {new_role}. Must be one of {ROLE_ACTIONS}")
+            raise InvalidRoleException(new_role)
         
         self.role = new_role
         self.update_timestamp()

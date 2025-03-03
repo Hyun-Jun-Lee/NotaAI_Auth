@@ -1,7 +1,8 @@
 from typing import List, Optional
 
 from domain.project import Project, ProjectMember
-from repository.interface.project_repository import IProjectRepository, IProjectMemberRepository
+from domain.permission import ROLE_ACTIONS
+from repository.interface import IProjectRepository, IProjectMemberRepository
 from exception.domain import (
     ProjectNotFoundException,
     ProjectAlreadyExistsException,
@@ -21,6 +22,7 @@ class ProjectService:
         """
         새로운 프로젝트를 생성합니다.
         """
+        # TODO : Tenant 별로 name 중복 X
         if await self.project_repository.get_by_name(name):
             raise ProjectAlreadyExistsException(name)
 
@@ -82,6 +84,9 @@ class ProjectService:
         """
         프로젝트에 사용자를 초대합니다.
         """
+        if role not in ROLE_ACTIONS:
+            raise InvalidRoleException(role)
+    
         project = await self.get_project_by_id(project_id)
         
         members = await self.project_member_repository.get_by_project_id(project_id)
