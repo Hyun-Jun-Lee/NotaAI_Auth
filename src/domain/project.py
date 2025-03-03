@@ -1,7 +1,6 @@
 # src/domain/project.py
 from typing import List, Optional
 from datetime import datetime
-import uuid
 
 from domain.base import BaseDomain
 from domain.permission import ROLE_ACTIONS
@@ -15,6 +14,12 @@ class Project(BaseDomain):
         self.owner_id = owner_id
         self.tenant_id = tenant_id
         self.members : List[ProjectMember] = []
+
+    @classmethod
+    def create(cls, name: str, description: str, owner_id: int, tenant_id: int) -> "Project":
+        project = cls(name=name, description=description, owner_id=owner_id, tenant_id=tenant_id)
+        project.create_timestamp()
+        return project
     
     def update(self, name: Optional[str] = None, description: Optional[str] = None) -> None:
         """프로젝트 정보를 업데이트합니다."""
@@ -39,6 +44,12 @@ class ProjectMember(BaseDomain):
         self.user_id = user_id
         self.role = role
         self.invited_by = invited_by
+
+    @classmethod
+    def create(cls, project_id: int, user_id: int, role: str, invited_by: int) -> "ProjectMember":
+        project_member = cls(project_id=project_id, user_id=user_id, role=role, invited_by=invited_by)
+        project_member.create_timestamp()
+        return project_member
 
     def change_role(self, new_role: str) -> None:
         """멤버의 역할을 변경합니다."""
