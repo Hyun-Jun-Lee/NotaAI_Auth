@@ -14,9 +14,10 @@ from exception.domain import (
 )
 
 class User(BaseDomain):
-    def __init__(self, email: str, password_hash: str, tenant_id: str, is_admin: bool = False, created_at: datetime = None, updated_at: datetime = None, id: int = None):
+    def __init__(self, email: str, name: str, password_hash: str, tenant_id: str, is_admin: bool = False, created_at: datetime = None, updated_at: datetime = None, id: int = None):
         super().__init__(id, created_at, updated_at)
         self.email = email
+        self.name = name
         self.password_hash = password_hash
         self.tenant_id = tenant_id
         self.is_admin = is_admin
