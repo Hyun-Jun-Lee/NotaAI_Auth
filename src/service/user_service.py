@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from domain.user import User
@@ -6,7 +7,8 @@ from exception.domain import (
     UserNotFoundException,
     UserAlreadyExistsException,
     InvalidPasswordException,
-    EmailNotVerifiedException
+    EmailNotVerifiedException,
+    EmailCodeExpiredException
 )
 
 
@@ -125,8 +127,12 @@ class UserService:
         """
         user = await self.get_user_by_email(email)
         
-        if user.email_code and datetime.now() < user.email_code_expires_at:
-            return user.email_code
+        if user.email_code:
+            if datetime.now() < user.email_code_expires_at:
+                return user.email_code
+            else:
+                raise EmailCodeExpiredException()
+
         
         email_code = user.generate_email_code(expires_in_minutes)
         
