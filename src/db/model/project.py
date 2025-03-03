@@ -1,9 +1,8 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from typing import Optional, Type, List
 
 from db.model.base import BaseDBModel
-from domain.project import Project, ProjectMember
+from domain import Project, ProjectMember
 
 
 class ProjectModel(BaseDBModel):

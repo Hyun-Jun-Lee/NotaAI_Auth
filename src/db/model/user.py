@@ -1,9 +1,8 @@
 from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Optional, Type
 
 from db.model.base import BaseDBModel
-from domain.user import User
+from domain import User
 
 
 class UserModel(BaseDBModel):

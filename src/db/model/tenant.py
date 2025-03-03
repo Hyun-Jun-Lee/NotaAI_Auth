@@ -1,9 +1,8 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-from typing import Optional, Type
 
 from db.model.base import BaseDBModel
-from domain.tenant import Tenant
+from domain import Tenant
 
 
 class TenantModel(BaseDBModel):
