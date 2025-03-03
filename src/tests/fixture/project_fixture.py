@@ -1,8 +1,9 @@
 import pytest
 from datetime import datetime
+from unittest.mock import AsyncMock
 
 from domain.project import Project, ProjectMember
-from domain.permission import ROLE_ACTIONS
+from service import ProjectService
 
 
 @pytest.fixture
@@ -71,3 +72,23 @@ def project_member():
         role="EDITOR",
         invited_by=200
     )
+
+
+@pytest.fixture
+def project_repository_mock():
+    """ProjectRepository mock fixture"""
+    repository = AsyncMock()
+    return repository
+
+
+@pytest.fixture
+def project_member_repository_mock():
+    """ProjectMemberRepository mock fixture"""
+    repository = AsyncMock()
+    return repository
+
+
+@pytest.fixture
+def project_service(project_repository_mock, project_member_repository_mock):
+    """ProjectService fixture"""
+    return ProjectService(project_repository_mock, project_member_repository_mock)
