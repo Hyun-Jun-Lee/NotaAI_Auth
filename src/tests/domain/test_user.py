@@ -74,9 +74,8 @@ def test_reset_password_success(user):
     code = user.generate_email_code()
     old_password_hash = user.password_hash
     
-    result = user.reset_password(code, "new_password123")
+    user.reset_password(code, "new_password123")
     
-    assert result is True
     assert user.password_hash != old_password_hash
     assert user.email_code is None
     assert user.email_code_expires_at is None

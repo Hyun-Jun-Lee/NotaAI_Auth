@@ -1,15 +1,17 @@
 import pytest
 
 from domain.user import User
-from utils import hash_password
 
 
 @pytest.fixture
 def user():
     """기본 사용자 객체를 생성하는 fixture"""
-    return User(
-        id="user123",
+    user = User.create(
         email="test@example.com",
-        password_hash=hash_password("password123"),
+        name="Test User",
+        password="password123",
         tenant_id="tenant456",
+        is_admin=False
     )
+    user.id = "user123" 
+    return user
