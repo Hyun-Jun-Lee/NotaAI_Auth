@@ -10,7 +10,6 @@ from exception.domain import (
     EmailCodeExpiredException,
     EmailCodeMismatchException,
     InvalidPasswordException,
-    RoleNotFoundException,
 )
 
 class User(BaseDomain):
@@ -25,8 +24,18 @@ class User(BaseDomain):
         self.email_code = None
         self.email_code_expires_at = None
 
+    @classmethod
+    def create(cls, email: str, name: str, password: str, tenant_id: str, is_admin: bool = False) -> "User":
+        return cls(
+            email=email,
+            name=name,
+            password_hash=hash_password(password),
+            tenant_id=tenant_id,
+            is_admin=is_admin
+        )
+
     def generate_email_code(self, expires_in_minutes: int = 30) -> str:
-        """이메일 인증 코드를 생성합니다."""
+        """이메일 인증 코드 및 유효기간을 생성합니다."""
 
         self.email_code = secrets.token_hex(8)
         self.email_code_expires_at = datetime.now() + timedelta(minutes=expires_in_minutes)
@@ -61,7 +70,7 @@ class User(BaseDomain):
             raise InvalidPasswordException()
         return result
 
-    def reset_password(self, email_code: str, new_password: str) -> bool:
+    def reset_password(self, email_code: str, new_password: str) -> None:
         """비밀번호를 재설정합니다."""
 
         if not self.email_code:
@@ -79,4 +88,11 @@ class User(BaseDomain):
         self.email_code = None
         self.email_code_expires_at = None
         self.update_timestamp()
-        return True
+
+    def change_password(self, current_password: str, new_password: str) -> None:
+        """비밀번호를 변경합니다."""
+
+        self.verify_password(current_password)
+            
+        self.password_hash = hash_password(new_password)
+        self.update_timestamp()
