@@ -1,8 +1,3 @@
-class ProjectNotFoundException(Exception):
-    """프로젝트가 없는 경우 발생하는 예외"""
-    def __init__(self, project_id: str):
-        self.project_id = project_id
-        super().__init__(f"Project not found: {project_id}")
 
 class InvalidRoleException(Exception):
     """유효하지 않은 역할이 있는 경우 발생하는 예외"""
