@@ -6,7 +6,14 @@ from domain.user import User
 
 
 class IUserRepository(BaseRepository):
-    
+
+    @abstractmethod
+    async def get_all_user(self, skip: int = 0, limit: int = 100) -> List[User]:
+        """
+        모든 사용자 조회
+        """
+        pass
+
     @abstractmethod
     def get_by_email(self, email: str) -> Optional[User]:
         """
@@ -15,14 +22,14 @@ class IUserRepository(BaseRepository):
         pass
 
     @abstractmethod
-    def get_by_tenant_id(self, tenant_id: str) -> List[User]:
+    def get_by_tenant_id(self, tenant_id: str, skip: int = 0, limit: int = 100) -> List[User]:
         """
         테넌트 ID로 사용자 목록을 조회합니다.
         """
         pass
     
     @abstractmethod
-    def get_admin_users(self) -> List[User]:
+    def get_admin_users(self, skip: int = 0, limit: int = 100) -> List[User]:
         """
         admin 사용자 조회
         """

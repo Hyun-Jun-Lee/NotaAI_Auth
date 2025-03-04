@@ -6,8 +6,6 @@ from repository.interface import IUserRepository
 from exception.domain import (
     UserNotFoundException,
     UserAlreadyExistsException,
-    InvalidPasswordException,
-    EmailNotVerifiedException,
     EmailCodeExpiredException
 )
 
@@ -16,6 +14,10 @@ class UserService:
     
     def __init__(self, user_repository: IUserRepository):
         self.user_repository = user_repository
+
+    async def get_all_user(self, skip: int = 0, limit: int = 100) -> List[User]:
+        """모든 사용자 조회"""
+        return await self.user_repository.get_all_user(skip, limit)
     
     async def create_user(self, email: str, name: str, password: str, tenant_id: int, is_admin: bool = False) -> User:
         """
@@ -52,17 +54,17 @@ class UserService:
             raise UserNotFoundException(email=email)
         return user
     
-    async def get_users_by_tenant(self, tenant_id: int) -> List[User]:
+    async def get_users_by_tenant(self, tenant_id: int, skip: int = 0, limit: int = 100) -> List[User]:
         """
         테넌트 ID로 사용자 목록을 조회합니다.
         """
-        return await self.user_repository.get_by_tenant_id(tenant_id)
+        return await self.user_repository.get_by_tenant_id(tenant_id, skip, limit)
     
-    async def get_admin_users(self) -> List[User]:
+    async def get_admin_users(self, skip: int = 0, limit: int = 100) -> List[User]:
         """
         관리자 사용자 목록을 조회합니다.
         """
-        return await self.user_repository.get_admin_users()
+        return await self.user_repository.get_admin_users(skip, limit)
     
     async def authenticate_user(self, email: str, password: str) -> User:
         """
@@ -140,14 +142,35 @@ class UserService:
         
         return email_code
     
-    async def reset_password(self, email: str, email_code: str, new_password: str) -> User:
+    async def verify_email_code(self, user_id: int, email_code: str) -> bool:
+        """
+        이메일 코드의 유효성을 검증합니다.
+        """
+        user = await self.get_user_by_id(user_id)
+        
+        # 코드가 유효한지 확인
+        if not user.email_code or user.email_code != email_code:
+            return False
+            
+        # 코드가 만료되었는지 확인
+        if datetime.now() > user.email_code_expires_at:
+            return False
+            
+        return True
+    
+    async def reset_password(self, user_id: int, new_password: str) -> User:
         """
         비밀번호를 재설정합니다.
         """
-        user = await self.get_user_by_email(email)
+        user = await self.get_user_by_id(user_id)
         
-        # 비밀번호 재설정
-        user.reset_password(email_code, new_password)
+        # 비밀번호 변경
+        user.password = new_password
+        user.hash_password()
+        
+        # 인증 코드 초기화
+        user.email_code = None
+        user.email_code_expires_at = None
         
         # 사용자 정보 업데이트
         return await self.update_user(user)

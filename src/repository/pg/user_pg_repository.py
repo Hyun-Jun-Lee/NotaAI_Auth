@@ -36,6 +36,14 @@ class UserPgRepository(IUserRepository):
         await self.session.delete(user)
         await self.session.commit()
         return True
+
+    async def get_all_user(self, skip: int = 0, limit: int = 100) -> List[User]:
+        """
+        모든 사용자 조회
+        """
+        result = await self.session.execute(select(UserModel).offset(skip).limit(limit))
+        users = result.scalars().all()
+        return [user.to_domain() for user in users]
     
     async def get_by_id(self, id: int) -> Optional[User]:
         """
@@ -78,21 +86,21 @@ class UserPgRepository(IUserRepository):
         user = result.scalars().first()
         return user.to_domain() if user else None
     
-    async def get_by_tenant_id(self, tenant_id: int) -> List[User]:
+    async def get_by_tenant_id(self, tenant_id: int, skip: int = 0, limit: int = 100) -> List[User]:
         """
         테넌트 ID로 사용자 목록을 조회합니다.
         """
         stmt = select(UserModel).where(UserModel.tenant_id == tenant_id)
-        result = await self.session.execute(stmt)
+        result = await self.session.execute(stmt.offset(skip).limit(limit))
         users = result.scalars().all()
         return [user.to_domain() for user in users]
     
-    async def get_admin_users(self) -> List[User]:
+    async def get_admin_users(self, skip: int = 0, limit: int = 100) -> List[User]:
         """
         관리자 사용자 목록을 조회합니다.
         """
         stmt = select(UserModel).where(UserModel.is_admin == True)
-        result = await self.session.execute(stmt)
+        result = await self.session.execute(stmt.offset(skip).limit(limit))
         users = result.scalars().all()
         return [user.to_domain() for user in users]
     
